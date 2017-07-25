@@ -1,0 +1,19 @@
+package inTheKitchen;
+
+public class Blender extends Appliance implements pluggable{
+	private int topSpeed;
+	
+	public Blender(String name, int topSpeed) {
+		super(name);
+		this.topSpeed = topSpeed;
+	}
+
+	public void plugIn() {
+		System.out.println("Plug in the " + getName() + ".");		
+	}
+
+	public void use() {
+		System.out.println("Making margaritas in the blender using speed " + topSpeed + ".");		
+	}
+
+}
