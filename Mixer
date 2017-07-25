@@ -1,0 +1,18 @@
+package inTheKitchen;
+
+public class Mixer extends Appliance implements pluggable{
+	private int topSpeed;
+	
+	public Mixer(String name, int topSpeed) {
+		super(name);
+		this.topSpeed = topSpeed;
+	}
+
+	public void use() {
+		System.out.println("I am using the mixer at speed " + topSpeed + ".");
+	}
+
+	public void plugIn() {
+		System.out.println("Plug in the " + getName() + ".");		
+	}	
+}
