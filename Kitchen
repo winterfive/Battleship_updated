@@ -1,0 +1,21 @@
+package inTheKitchen;
+
+public class Kitchen {
+	public static void main(String args[]) {
+		
+		Mixer myMixer = new Mixer("Kitchen Aid", 9);
+		
+		myMixer.plugIn();
+		myMixer.use();
+		
+		Blender myBlender = new Blender("Juice Master", 8);
+		
+		myBlender.plugIn();
+		myBlender.use();
+		
+		Oven myOven = new Oven("Bosch");
+		myOven.use();
+		
+		System.out.println("There are " + Appliance.numOfAppliances + " appliances in the kitchen.");
+	}
+}
