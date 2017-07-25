@@ -1,0 +1,27 @@
+package inTheKitchen;
+
+public abstract class Appliance {	
+	private String name;
+		
+	protected static int numOfAppliances = 0;
+	
+	public Appliance(String name) {
+		super();
+		this.setName(name);
+		numOfAppliances++;
+	}
+
+	public abstract void use();
+	
+	public String toString() {
+		return super.toString();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+}
