@@ -1,0 +1,15 @@
+package inTheKitchen;
+
+public class Oven extends Appliance{
+	// private int numOfBurners;
+	
+	public Oven(String name) {
+		super(name);
+		// TODO Auto-generated constructor stub
+	}
+
+	public void use() {
+		System.out.println("Baking a cake in the " + getName() + " oven.");
+	}
+
+}
