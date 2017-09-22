@@ -1,7 +1,0 @@
-package inTheKitchen;
-
-public interface pluggable {
-	
-	public void plugIn();
-
-}
