@@ -1,11 +1,9 @@
 // This app requests user input to produce and search an array of random numbers.
 // Sept. 2017 by Lee Gainer
-// Created begin getting used to Java syntax and built in methods
+// Created to become more comfortable with Java syntax and built in methods
 
 package generate;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -43,7 +41,7 @@ public class User {
 			haystack[m] = r.nextInt(4 * n);
 		}
 		
-		// is number in haystack?			
+		// is x in haystack?			
 		for (int y = 0; y < n; y++) {
 			
 			if (haystack[y] == x) {
@@ -57,7 +55,7 @@ public class User {
 			}
 		}		
 		
-		// ask user if they wish to print the array
+		// print array option for user
 		Scanner in = new Scanner(System.in);
 		System.out.println("Would you like to see the numbers in the array (yes/no)?");
 		String reply = in.nextLine();
