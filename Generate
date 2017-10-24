@@ -1,6 +1,9 @@
-// This app requests user input to produce and search an array of random numbers.
-// Sept. 2017 by Lee Gainer
-// Created to become more comfortable with Java syntax and built in methods
+/*
+ * This app requests user input to produce and search an array of random numbers.
+ * 
+ * @author Lee Gainer
+ * @since Sept 2017
+ */
 
 package generate;
 
