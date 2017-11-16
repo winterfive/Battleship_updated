@@ -1,0 +1,62 @@
+package com.LeeGainer.Battleship2;
+
+public class Gameboard {
+	
+	static int maxRow;
+	static int maxCol;
+	String[][] gameboard;
+	
+	/*
+	 * Create initial gameboard
+	 * void -> void
+	 */
+	public static void setUpGameboard() {
+		
+		String[][] gameBoard = new String [maxRow][maxCol];
+		
+		for(int i = 0; i < maxRow; i++) {
+			for(int j = 0; j < maxCol; j++) {
+				
+				// place numbers in first row
+				if (i == 0 && j != 0 && j != 1 && j != 2 && j != 13 && j != 14 && j != 15) {
+					gameBoard[i][j] = String.valueOf(j - 3) + " ";
+				}
+				
+				// draw spaces in 12th column
+				else if(i != 0 && i != 11 && j != 12) {
+					gameBoard[i][j] = "  ";
+				}
+				
+				// draw spaces
+				else {
+					gameBoard[i][j] = " ";
+				}
+				
+				// place numbers in bottom row
+				if (i == 11 && j != 0 && j != 1 && j != 2 && j != 13 && j != 14 && j != 15) {
+					gameBoard[i][j] = String.valueOf(j - 3) + " ";
+				}
+				
+				// place numbers in columns on Lside of board
+				if (j == 0 && i != 0 && i != 11) {
+					gameBoard[i][j] = String.valueOf(i - 1);
+				}
+				
+				// place numbers in columns on Rside of board
+				if (j == 15 && i != 0 && i != 11) {
+					gameBoard[i][j] = String.valueOf(i - 1) + " ";
+				}
+				
+				//place spaces along side columns
+				if ((j == 1 || j == 14) && i != 0 && i != 11) {
+					gameBoard[i][j] = " ";
+				}
+				
+				// place pipes along sides
+				if ((j == 2 || j == 13) && i != 0 && i != 11) {
+					gameBoard[i][j] = "|";
+				}
+			}			
+		}
+	} 
+}
