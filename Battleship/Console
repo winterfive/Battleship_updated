@@ -1,0 +1,15 @@
+package com.LeeGainer.Battleship2;
+
+public class Console {
+	
+	// I/O
+	
+	/*
+	 * Outputs message
+	 * String -> void
+	 */
+	public static void displayMessage(String string) {
+		System.out.println(string);		
+	}
+
+}
