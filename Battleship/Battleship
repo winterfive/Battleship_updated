@@ -6,7 +6,21 @@ public class Battleship {
 		
 		Console.displayMessage("*** Welcome to the Battleship Game ***\n\nRight now, the sea is empty.");
 		
-		Gameboard.setUpGameboard();
+		Gameboard game = new Gameboard();
+		
+		game.setUpGameboard();
+		
+		Console.displayGame();
+		
+		Console.displayMessage("\n\nPrepare your fleet for battle.");
+		
+		Player user = new Player("user");
+		Player computer = new Player("computer");
+		
+		user.createFleet(user);
+		computer.createFleet(computer);
+		
+		Console.displayMessage("Got to here Wooooo");
 		
 	}
 
