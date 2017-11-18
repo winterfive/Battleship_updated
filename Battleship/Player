@@ -1,0 +1,114 @@
+package com.LeeGainer.Battleship2;
+
+import java.awt.Point;
+import java.util.ArrayList;
+
+public class Player {
+	
+	private ArrayList <Ship> myShips;
+	private ArrayList <Point> myShots;
+	private String name;
+	
+	public Player(String name) {
+		this.name = name;
+		this.myShips = new ArrayList <Ship>();
+		this.myShots = new ArrayList <Point>();
+	}
+
+	/*
+	 * Returns name of Player
+	 * void -> String
+	 */	
+	public String getName(Player p) {
+		return name;
+	}
+	
+	/*
+	 * Checks if Player name is "user"
+	 * Object -> boolean
+	 */
+	public boolean checkName(Player p) {
+		if(p.getName(p).equals("user")) {
+			return true;			
+		} else {
+			return false;
+		}
+	}
+
+	
+	/*
+	 * Creates Player "fleet"
+	 * Player -> void
+	 */	
+	public void createFleet(Player p) {
+		
+		Counter shipCount = new Counter();
+		shipCount.addToCounter();
+		
+		while(shipCount.getCounter() < 6) {
+			
+			Point xy = new Point();			
+			
+			while(true) {
+				
+				if(p.checkName(p)) {
+					Console.displayMessage("\nEnter X coordinate for ship #" + (shipCount.getCounter()) + ": ");
+				}			
+				
+				// Get row coordinate
+				xy.x = Console.getCoordinate(p);
+				
+				if(p.checkName(p)) {
+					Console.displayMessage("Enter Y coordinate for ship #" + (shipCount.getCounter()) + ": ");
+				}
+				
+				// Get column coordinate
+				xy.y = Console.getCoordinate(p);
+				
+				// If this isn't the first ship
+				if(shipCount.getCounter() > 0) {
+					if(isLocationUsed(p, xy)) {
+						// If Player is user
+						if(p.checkName(p)) {
+							Console.displayMessage("That location is already being used.");
+							continue;												
+						// Player is computer
+						} else {
+							continue;							
+						}
+					} else {
+						break;
+					}						
+				// It's the first ship
+				} else {
+					break;
+				}
+			}
+			
+			Ship myShip = new Ship(xy, true);
+			
+			myShips.add(myShip);
+			
+			Gameboard.updateGameboard(xy, "S");
+			
+			// Display updated game board w/ each each ship			
+			Console.displayGame();
+			
+			shipCount.addToCounter();
+		}		
+	}
+	
+	/*
+	 * Check if Point already exists in ArrayList myShips
+	 * Point -> boolean
+	 */
+	public boolean isLocationUsed(Player p, Point point) {
+			
+		for(Ship s : p.myShips) {
+	        if(s.getLocation().equals(point)) {
+	        		return true;
+	        }
+		}
+		return false;
+	}
+}
