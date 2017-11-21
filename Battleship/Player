@@ -2,6 +2,7 @@ package com.LeeGainer.Battleship2;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
 	
@@ -35,9 +36,8 @@ public class Player {
 		}
 	}
 
-	
 	/*
-	 * Creates Player "fleet"
+	 * Creates Player "fleet" (ArrayList myShips)
 	 * Player -> void
 	 */	
 	public void createFleet(Player p) {
@@ -52,8 +52,8 @@ public class Player {
 			while(true) {
 				
 				if(p.checkName(p)) {
-					Console.displayMessage("\nEnter X coordinate for ship #" + (shipCount.getCounter()) + ": ");
-				}			
+					Console.displayMessage("Enter X coordinate for ship #" + (shipCount.getCounter()) + ": ");
+				}
 				
 				// Get row coordinate
 				xy.x = Console.getCoordinate(p);
@@ -89,10 +89,26 @@ public class Player {
 			
 			myShips.add(myShip);
 			
-			Gameboard.updateGameboard(xy, "S");
-			
-			// Display updated game board w/ each each ship			
-			Console.displayGame();
+			// If player is user			
+			if(p.checkName(p)) {
+				Gameboard.updateGameboard(xy, "S");
+				
+				// Display updated game board w/ each each ship			
+				Console.displayGame();
+			// If player is computer
+			} else {
+				
+				// Create random coordinate ships and log into myShots array TODO				
+				
+				// Pause and then announce ship deployment 
+				try {
+					Thread.sleep(1000);
+				} catch(InterruptedException ex) {
+				    Thread.currentThread().interrupt();
+				}
+				
+				Console.displayMessage("Computer ship #" + shipCount.getCounter() + " is ready for battle.");
+			}
 			
 			shipCount.addToCounter();
 		}		
@@ -111,4 +127,105 @@ public class Player {
 		}
 		return false;
 	}
+	
+	/*
+	 * Umbrella method for game play methods
+	 * void -> void
+	 */
+
+	public static void playGame(Player u, Player c) {
+		
+		while(true) {
+			Point xy = u.takeShot(u);
+			u.evaluateShot(u, c, xy);
+			Console.displayGame();
+			if(u.hasLost(u)) {
+				Console.displayMessage("Your fleet is at the bottom of the ocean.\nYou have lost the battle.");
+				break;
+			}
+			Point xy2 = c.takeShot(c);
+			c.evaluateShot(u, c, xy2);
+			Console.displayGame();
+			if(c.hasLost(c)) {
+				Console.displayMessage("The computer's fleet has been sunk.\nYou have won the battle!");
+				break;				
+			}
+		}			
+	}
+
+	private void evaluateShot(Player u, Player c, Point point) {
+		
+		// Check point against user array
+		if(isLocationUsed(u, point)) {
+			if(u.checkName(u)) {
+				Console.displayMessage("You sank your own ship!");
+			} else {
+				Console.displayMessage("The computer sank your ship!");
+			}
+			
+			// Update board
+			Gameboard.updateGameboard(point, "x");
+			
+			// Change ship.active to false
+			for(Ship s : u.myShips) {
+				if(s.getLocation().equals(point))
+	                s.setActive(false);
+			}			
+		}
+		
+		// Check point against computer array TODO
+		// If user, point = sunken comp ship?
+		// If computer, add shot to myShots array
+		
+		
+	}
+	
+	/*
+	 * Checks active state of ships in myArray for victory
+	 * Player -> boolean
+	 */
+	private boolean hasLost(Player p) {
+		
+		Counter sunk = new Counter();
+		
+		for(Ship s : p.myShips) {
+			if(s.getActive() == false) {
+				sunk.addToCounter();
+			}			
+		}
+		
+		if(sunk.getCounter() == 5) {
+			return true;		
+		} else {
+			return false;
+		}
+	}
+	
+	/*
+	 * Gets Point for player shots
+	 * void -> Point
+	 */
+	private Point takeShot(Player p) {
+		
+		Counter shotCount = new Counter();
+		shotCount.addToCounter();
+		
+		Point xy = new Point();
+		
+		// If player is user
+		if(p.checkName(p)) {
+			Console.displayMessage("Enter X coordinate for shot #" + shotCount.getCounter() + ": ");
+		}
+		
+		xy.x = Console.getCoordinate(p);
+		
+		// If player is user
+		if(p.checkName(p)) {
+			Console.displayMessage("Enter Y coordinate for shot #" + shotCount.getCounter() + ": ");
+		}
+		
+		xy.y = Console.getCoordinate(p);
+		
+		return xy;
+	}		
 }

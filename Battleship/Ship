@@ -9,7 +9,7 @@ public class Ship {
 	
 	public Ship(Point location, Boolean active) {
 		this.setLocation(location);
-		this.active = active;
+		this.setActive(active);
 	}
 
 	/**
@@ -24,5 +24,19 @@ public class Ship {
 	 */
 	public void setLocation(Point location) {
 		this.location = location;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public Boolean getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }
