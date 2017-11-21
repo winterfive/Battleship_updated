@@ -2,7 +2,6 @@ package com.LeeGainer.Battleship2;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Player {
 	
@@ -25,10 +24,18 @@ public class Player {
 	}
 	
 	/*
+	 * Returns ArrayList myShips
+	 * Player -> myShips
+	 */
+	public ArrayList <Ship> getShips(Player p) {
+		return p.myShips;
+	}
+	
+	/*
 	 * Checks if Player name is "user"
 	 * Object -> boolean
 	 */
-	public boolean checkName(Player p) {
+	public boolean checkForUser(Player p) {
 		if(p.getName(p).equals("user")) {
 			return true;			
 		} else {
@@ -51,37 +58,32 @@ public class Player {
 			
 			while(true) {
 				
-				if(p.checkName(p)) {
+				if(p.checkForUser(p)) {
 					Console.displayMessage("Enter X coordinate for ship #" + (shipCount.getCounter()) + ": ");
 				}
 				
 				// Get row coordinate
 				xy.x = Console.getCoordinate(p);
 				
-				if(p.checkName(p)) {
+				if(p.checkForUser(p)) {
 					Console.displayMessage("Enter Y coordinate for ship #" + (shipCount.getCounter()) + ": ");
 				}
 				
 				// Get column coordinate
 				xy.y = Console.getCoordinate(p);
 				
+				// Check for repeated ship location
 				// If this isn't the first ship
 				if(shipCount.getCounter() > 0) {
 					if(isLocationUsed(p, xy)) {
 						// If Player is user
-						if(p.checkName(p)) {
+						if(p.checkForUser(p)) {
 							Console.displayMessage("That location is already being used.");
-							continue;												
-						// Player is computer
-						} else {
-							continue;							
-						}
+						}						
+						continue;							
 					} else {
 						break;
-					}						
-				// It's the first ship
-				} else {
-					break;
+					}
 				}
 			}
 			
@@ -90,7 +92,7 @@ public class Player {
 			myShips.add(myShip);
 			
 			// If player is user			
-			if(p.checkName(p)) {
+			if(p.checkForUser(p)) {
 				Gameboard.updateGameboard(xy, "S");
 				
 				// Display updated game board w/ each each ship			
@@ -111,7 +113,7 @@ public class Player {
 			}
 			
 			shipCount.addToCounter();
-		}		
+		}
 	}
 	
 	/*
@@ -132,69 +134,112 @@ public class Player {
 	 * Umbrella method for game play methods
 	 * void -> void
 	 */
-
 	public static void playGame(Player u, Player c) {
 		
+		Counter shotCount = new Counter();
+		shotCount.addToCounter();
+		
 		while(true) {
-			Point xy = u.takeShot(u);
+			Console.displayMessage("PLAYER'S TURN:");
+			Point xy = u.takeShot(u, shotCount);
 			u.evaluateShot(u, c, xy);
 			Console.displayGame();
-			if(u.hasLost(u)) {
-				Console.displayMessage("Your fleet is at the bottom of the ocean.\nYou have lost the battle.");
+			if(u.hasLost(u, c)) {
 				break;
 			}
-			Point xy2 = c.takeShot(c);
-			c.evaluateShot(u, c, xy2);
+			Console.displayMessage("COMPUTER'S TURN:");
+			Point xy2 = c.takeShot(c, shotCount);
+			c.evaluateShot(c, u, xy2);
 			Console.displayGame();
-			if(c.hasLost(c)) {
-				Console.displayMessage("The computer's fleet has been sunk.\nYou have won the battle!");
+			if(c.hasLost(c, u)) {				
 				break;				
 			}
+			
+			shotCount.addToCounter();
 		}			
 	}
-
-	private void evaluateShot(Player u, Player c, Point point) {
+	
+	/*
+	 * Evaluates "shot" (point) fired by players
+	 * Player, Player, Point -> void
+	 */
+	private void evaluateShot(Player shooter, Player other, Point point) {
 		
-		// Check point against user array
-		if(isLocationUsed(u, point)) {
-			if(u.checkName(u)) {
-				Console.displayMessage("You sank your own ship!");
-			} else {
-				Console.displayMessage("The computer sank your ship!");
+		// Check point against player array
+		
+		// If Player shooter is user
+		if(shooter.checkForUser(shooter)) {
+			// Check user array
+			if(isLocationUsed(shooter, point)) {
+				if(shooter.checkForUser(shooter)) {
+					Console.displayMessage("You sank your own ship!");
+				} else {
+					Console.displayMessage("The computer sank your ship!");
+				}				
+			
+				// Update board
+				Gameboard.updateGameboard(point, "x");
+				
+				// Change user ship.active to false
+				shooter.setToFalse(shooter, point);
 			}
-			
-			// Update board
-			Gameboard.updateGameboard(point, "x");
-			
-			// Change ship.active to false
-			for(Ship s : u.myShips) {
-				if(s.getLocation().equals(point))
-	                s.setActive(false);
-			}			
+		// Check point against computer array	
+		} else if(!shooter.checkForUser(shooter)) {
+			if(isLocationUsed(shooter, point)) {
+				if(other.checkForUser(other)) {
+					Console.displayMessage("You sank an enemy ship!");
+					
+					// Update board
+					Gameboard.updateGameboard(point, "X");
+				}				
+			}
+						
+		// Shot missed
+		} else {
+			// If shooter is user
+			if(shooter.checkForUser(shooter)) {
+				Console.displayMessage("You missed.");				
+				// Update board
+				Gameboard.updateGameboard(point, "-");
+			// If shooter is computer
+			} else {
+				Console.displayMessage("Computer missed.");
+				// Track computer misses
+				myShots.add(point);				
+			}					
 		}
-		
-		// Check point against computer array TODO
-		// If user, point = sunken comp ship?
-		// If computer, add shot to myShots array
-		
-		
 	}
 	
 	/*
 	 * Checks active state of ships in myArray for victory
-	 * Player -> boolean
+	 * Player, Player -> boolean
 	 */
-	private boolean hasLost(Player p) {
+	private boolean hasLost(Player u, Player c) {
 		
-		Counter sunk = new Counter();
+		Counter uSunk = new Counter();
+		Counter cSunk = new Counter();
 		
-		for(Ship s : p.myShips) {
+		for(Ship s : u.myShips) {
 			if(s.getActive() == false) {
-				sunk.addToCounter();
+				uSunk.addToCounter();
 			}			
 		}
 		
-		if(sunk.getCounter() == 5) {
+		for(Ship s : c.myShips) {
+			if(s.getActive() == false) {
+				cSunk.addToCounter();
+			}			
+		}
+		
+		if(uSunk.getCounter() == 5) {
+			Console.displayMessage("Your fleet is at the bottom of the ocean.\nYou have lost the battle.");
+		}
+		
+		if(cSunk.getCounter() == 5) {
+			Console.displayMessage("The computer's fleet has been sunk.\nYou have won the battle!");
+		}
+		
+		if(uSunk.getCounter() == 5 || cSunk.getCounter() == 5) {
 			return true;		
 		} else {
 			return false;
@@ -205,27 +250,37 @@ public class Player {
 	 * Gets Point for player shots
 	 * void -> Point
 	 */
-	private Point takeShot(Player p) {
-		
-		Counter shotCount = new Counter();
-		shotCount.addToCounter();
+	private Point takeShot(Player p, Counter shotCount) {
 		
 		Point xy = new Point();
 		
 		// If player is user
-		if(p.checkName(p)) {
+		if(p.checkForUser(p)) {
 			Console.displayMessage("Enter X coordinate for shot #" + shotCount.getCounter() + ": ");
 		}
 		
 		xy.x = Console.getCoordinate(p);
 		
 		// If player is user
-		if(p.checkName(p)) {
+		if(p.checkForUser(p)) {
 			Console.displayMessage("Enter Y coordinate for shot #" + shotCount.getCounter() + ": ");
 		}
 		
 		xy.y = Console.getCoordinate(p);
 		
 		return xy;
-	}		
+	}
+	
+	/*
+	 * Change sunken Ship.active to false
+	 * Player, Point -> void
+	 */
+	public void setToFalse(Player p, Point point) {
+		// Change user ship.active to false
+		for(Ship s : p.myShips) {
+			if(s.getLocation().equals(point)) {
+                s.setActive(false);
+			}
+		}
+	}
 }
