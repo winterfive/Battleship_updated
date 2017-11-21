@@ -30,6 +30,8 @@ public class Console {
 				System.out.print(Gameboard.getBoard()[i][j]);
 			}
 		}
+		
+		Console.displayMessage("\n");
 	}
 
 	/*
@@ -59,9 +61,9 @@ public class Console {
 		
 		} else {
 			// Generate random coordinate for computer ship
-			Random a = new Random(0-9);		
+			Random a = new Random();		
 				
-			int x = a.nextInt();
+			int x = a.nextInt(9);
 			
 			return x;
 		}		
