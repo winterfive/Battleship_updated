@@ -12,16 +12,22 @@ public class Battleship {
 		
 		Console.displayGame();
 		
-		Console.displayMessage("\n\nPrepare your fleet for battle.");
+		Console.displayMessage("Prepare your fleet for battle.");
 		
 		Player user = new Player("user");
+		
 		Player computer = new Player("computer");
 		
 		user.createFleet(user);
+		
+		Console.displayMessage("The computer is deploying it's fleet.");
+		
 		computer.createFleet(computer);
 		
-		Console.displayMessage("Got to here Wooooo");
+		Console.displayMessage("Let the battle begin!");
+		Console.displayGame();
 		
+		Player.playGame(user, computer);		
 	}
 
 }
