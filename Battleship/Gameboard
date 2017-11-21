@@ -4,7 +4,7 @@ import java.awt.Point;
 
 public class Gameboard {
 	
-	// The gameboard array is size [maxRow][maxCol].
+	// The gameboard 2D array is size [maxRow][maxCol].
 	// The area in the array that is used for play is [maxRow - 2][maxCol - 6].
 	// The play area is square, [m][m].
 	
