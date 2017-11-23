@@ -43,7 +43,7 @@ public class Console {
 		int maxR = Gameboard.getMaxRow() - 3;
 			
 		// if getting coordinate from user
-		if(p.checkName(p)) {
+		if(p.checkForUser(p)) {
 			Scanner getCo = new Scanner(System.in);
 			String c = getCo.next();
 			
