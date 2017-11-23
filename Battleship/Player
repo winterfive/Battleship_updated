@@ -31,6 +31,14 @@ public class Player {
 		return p.myShips;
 	}
 	
+	/**
+	 * Return ArrayList myShots
+	 * void -> ArrayList
+	 */
+	public ArrayList <Point> getMyShots() {
+		return myShots;
+	}
+	
 	/*
 	 * Checks if Player name is "user"
 	 * Object -> boolean
@@ -99,15 +107,11 @@ public class Player {
 				Console.displayGame();
 			// If player is computer
 			} else {
+				// Add point to myShots array
+				// Computer cannot repeat shots or hit it's own ships
+				myShots.add(xy);						
 				
-				// Create random coordinate ships and log into myShots array TODO				
-				
-				// Pause and then announce ship deployment 
-				try {
-					Thread.sleep(1000);
-				} catch(InterruptedException ex) {
-				    Thread.currentThread().interrupt();
-				}
+				pause(1000);
 				
 				Console.displayMessage("Computer ship #" + shipCount.getCounter() + " is ready for battle.");
 			}
@@ -167,6 +171,96 @@ public class Player {
 		
 		// Check point against player array
 		
+
+		// shooter is user
+		if(shooter.checkForUser(shooter)) {
+			// Check user array for hit
+			if(isLocationUsed(shooter, point)) {
+				
+				pause(1000);
+				
+				// If shot a repeated "sunk your own ship" shot				
+				if(shooter.isShotRepeat(shooter, point)) {
+					Console.displayMessage("You made that shot before.");
+				} else {
+					Console.displayMessage("You sank your own ship!");
+					
+					// Update board
+					Gameboard.updateGameboard(point, "x");
+					pause(1000);	
+					
+					// Change user ship.active to false
+					shooter.setToFalse(shooter, point);
+					
+					// Add point to myShots
+					myShots.add(point);
+				}
+			} else {
+				// Check user shot against computer array
+				if(isLocationUsed(other, point)) {
+					
+					pause(1000);
+					
+					// If shot a repeated shot that sunk enemy ship
+					if(shooter.isShotRepeat(shooter, point)) {
+						Console.displayMessage("You made that shot before.");
+					} else {
+						Console.displayMessage("You sank an enemy ship!");
+						
+						// Update board
+						Gameboard.updateGameboard(point, "X");
+						pause(1000);	
+						
+						// Change computer ship.active to false
+						shooter.setToFalse(other, point);
+						
+						// Add point to myShots
+						myShots.add(point);
+					}										
+				} else {
+					
+					pause(1000);
+					
+					// If shot a repeated missed host
+					if(shooter.isShotRepeat(shooter, point)) {
+						Console.displayMessage("You made that shot before.");
+					} else {
+						Console.displayMessage("You missed.");
+						
+						// Update board
+						Gameboard.updateGameboard(point, "-");
+						pause(1000);		
+						
+						// Add point to myShots
+						myShots.add(point);										
+					}					
+				}				
+			}
+		} else {
+			// shooter is computer
+			if(isLocationUsed(other, point)) {
+				
+				pause(1250);
+				Console.displayMessage("The computer sank your ship!");
+				
+				// Update board
+				Gameboard.updateGameboard(point, "x");
+				pause(1000);	
+				
+				// record computer shot
+				getMyShots().add(point);	
+				
+				// Change user ship.active to false
+				other.setToFalse(other, point);				
+			} else {
+				
+				pause(1250);
+				Console.displayMessage("Computer missed.");
+				
+				// record missed computer shot
+				getMyShots().add(point);				
+			}
+
 		// If Player shooter is user
 		if(shooter.checkForUser(shooter)) {
 			// Check user array
@@ -206,10 +300,22 @@ public class Player {
 				Console.displayMessage("Computer missed.");
 				// Track computer misses
 				myShots.add(point);				
-			}					
+			}
 		}
 	}
 	
+	/*
+	 * Pauses game for better readability
+	 * int -> void
+	 */	
+	private void pause(int i) { 
+		try {
+			Thread.sleep(i);
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}		
+	}
+
 	/*
 	 * Checks active state of ships in myArray for victory
 	 * Player, Player -> boolean
@@ -220,6 +326,21 @@ public class Player {
 		Counter cSunk = new Counter();
 		
 		for(Ship s : u.myShips) {
+			if(s.getActive() == false) {
+				uSunk.addToCounter();
+			}			
+		}
+		
+		for(Ship s : c.myShips) {
+			if(s.getActive() == false) {
+				cSunk.addToCounter();
+			}			
+		}
+		
+		if(uSunk.getCounter() == 5) {
+			Console.displayMessage("Your fleet is at the bottom of the ocean.\nYou have lost the battle.");
+			return true;
+
 			if(s.getActive() == false) {
 				uSunk.addToCounter();
 			}			
@@ -244,6 +365,12 @@ public class Player {
 		} else {
 			return false;
 		}
+		
+		if(cSunk.getCounter() == 5) {
+			Console.displayMessage("The computer's fleet has been sunk.\nYou have won the battle!");
+			return true;
+		}		
+		return false;
 	}
 	
 	/*
@@ -268,6 +395,16 @@ public class Player {
 		
 		xy.y = Console.getCoordinate(p);
 		
+		// Check myShots for repeated shot from computer
+		if(!checkForUser(p)) {
+			// If this coordinate is a repeat
+			while(isShotRepeat(p, xy)) {
+				// Get another pair of coordinates
+				xy.x = Console.getCoordinate(p);
+				xy.y = Console.getCoordinate(p);
+			}
+		}		
+		
 		return xy;
 	}
 	
@@ -282,5 +419,18 @@ public class Player {
                 s.setActive(false);
 			}
 		}
+	}
+	
+	/*
+	 * Checks computer myShots for repeated shots
+	 * Player, Point -> boolean
+	 */	
+	public boolean isShotRepeat(Player p, Point xy) {
+		for(Point point : p.myShots) {
+	        if(point.equals(xy)) {
+	        		return true;
+	        }
+		}
+		return false;
 	}
 }

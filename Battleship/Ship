@@ -38,5 +38,5 @@ public class Ship {
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
-	}
+	}	
 }
