@@ -27,6 +27,8 @@ public class Battleship {
 		Console.displayMessage("Let the battle begin!");
 		Console.displayGame();
 		
-		Player.playGame(user, computer);		
+		Player.playGame(user, computer);
+		
+		
 	}
 }
