@@ -38,7 +38,7 @@ public class Player {
 	public ArrayList <Point> getMyShots() {
 		return myShots;
 	}
-	
+		
 	/*
 	 * Checks if Player name is "user"
 	 * Object -> boolean
@@ -171,7 +171,6 @@ public class Player {
 		
 		// Check point against player array
 		
-
 		// shooter is user
 		if(shooter.checkForUser(shooter)) {
 			// Check user array for hit
@@ -260,47 +259,6 @@ public class Player {
 				// record missed computer shot
 				getMyShots().add(point);				
 			}
-
-		// If Player shooter is user
-		if(shooter.checkForUser(shooter)) {
-			// Check user array
-			if(isLocationUsed(shooter, point)) {
-				if(shooter.checkForUser(shooter)) {
-					Console.displayMessage("You sank your own ship!");
-				} else {
-					Console.displayMessage("The computer sank your ship!");
-				}				
-			
-				// Update board
-				Gameboard.updateGameboard(point, "x");
-				
-				// Change user ship.active to false
-				shooter.setToFalse(shooter, point);
-			}
-		// Check point against computer array	
-		} else if(!shooter.checkForUser(shooter)) {
-			if(isLocationUsed(shooter, point)) {
-				if(other.checkForUser(other)) {
-					Console.displayMessage("You sank an enemy ship!");
-					
-					// Update board
-					Gameboard.updateGameboard(point, "X");
-				}				
-			}
-						
-		// Shot missed
-		} else {
-			// If shooter is user
-			if(shooter.checkForUser(shooter)) {
-				Console.displayMessage("You missed.");				
-				// Update board
-				Gameboard.updateGameboard(point, "-");
-			// If shooter is computer
-			} else {
-				Console.displayMessage("Computer missed.");
-				// Track computer misses
-				myShots.add(point);				
-			}
 		}
 	}
 	
@@ -340,30 +298,6 @@ public class Player {
 		if(uSunk.getCounter() == 5) {
 			Console.displayMessage("Your fleet is at the bottom of the ocean.\nYou have lost the battle.");
 			return true;
-
-			if(s.getActive() == false) {
-				uSunk.addToCounter();
-			}			
-		}
-		
-		for(Ship s : c.myShips) {
-			if(s.getActive() == false) {
-				cSunk.addToCounter();
-			}			
-		}
-		
-		if(uSunk.getCounter() == 5) {
-			Console.displayMessage("Your fleet is at the bottom of the ocean.\nYou have lost the battle.");
-		}
-		
-		if(cSunk.getCounter() == 5) {
-			Console.displayMessage("The computer's fleet has been sunk.\nYou have won the battle!");
-		}
-		
-		if(uSunk.getCounter() == 5 || cSunk.getCounter() == 5) {
-			return true;		
-		} else {
-			return false;
 		}
 		
 		if(cSunk.getCounter() == 5) {
@@ -433,4 +367,5 @@ public class Player {
 		}
 		return false;
 	}
+
 }
