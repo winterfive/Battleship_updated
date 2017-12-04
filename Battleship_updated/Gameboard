@@ -1,0 +1,450 @@
+package com.LeeGainer.Battleship2;
+
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Random;
+
+public class Gameboard {
+	
+	Console myConsole = new Console();
+	Counter shotCount = new Counter();
+	
+	// The gameboard 2D array is size [maxRow][maxCol].
+	// The area in the array that is used for play is [maxRow - 2][maxCol - 6].
+	// The play area is square, [m][m].
+	
+	private int maxRow = 9;
+	private int maxCol = 9;
+	private String[][] gameboard;
+	private String[][] fleetboard;
+	private boolean isHuman = false;
+	private ArrayList <Ship> myShips;
+	private ArrayList <Point> myShots;
+	
+	public Gameboard(boolean isHuman) {
+		this.isHuman = isHuman;
+		
+		setUpGameboard();
+	}
+
+	/*
+	 * Create initial gameboard
+	 * void -> void
+	 * ALL THIS METHOD CODE IS NOW BROKE.
+	 */
+	protected void setUpGameboard() {
+		
+		gameboard = new String [maxRow][maxCol];
+		
+		for(int i = 0; i < maxRow; i++) {
+			for(int j = 0; j < maxCol; j++) {
+				
+				// Place numbers in first row
+				if (i == 0 && j != 0 && j != 1 && j != 2 && j != maxCol - 3 && j != maxCol - 2 && j != maxCol - 1) {
+					gameboard[i][j] = String.valueOf(j - 3) + " ";
+				}
+				
+				// Draw spaces in all columns but last number column
+				// The last column that holds numbers (ships) needs 2 spaces
+				else if(i != 0 && i != 11 && j != maxCol - 4) {
+					gameboard[i][j] = "  ";
+				}
+				
+				// draw spaces
+				else {
+					gameboard[i][j] = " ";
+				}
+				
+				// place numbers in bottom row
+				if (i == maxRow - 1 && j != 0 && j != 1 && j != 2 && j != maxCol - 3 && j != maxCol - 2 && j != maxCol - 1) {
+					gameboard[i][j] = String.valueOf(j - 3) + " ";
+				}
+				
+				// place numbers in columns on Lside of board
+				if (j == 0 && i != 0 && i != maxRow - 1) {
+					gameboard[i][j] = String.valueOf(i - 1);
+				}
+				
+				// place numbers in columns on Rside of board
+				if (j == maxCol - 1 && i != 0 && i != maxRow - 1) {
+					gameboard[i][j] = String.valueOf(i - 1) + " ";
+				}
+				
+				//place spaces along side columns
+				if ((j == 1 || j == maxCol - 2) && i != 0 && i != maxRow - 1) {
+					gameboard[i][j] = " ";
+				}
+				
+				// place pipes along sides
+				if ((j == 2 || j == maxCol - 3) && i != 0 && i != maxRow - 1) {
+					gameboard[i][j] = "|";
+				}
+			}			
+		}
+	}
+	
+	/*
+	 * Updates Gameboard String[][] gameboard
+	 * Point -> void
+	 */
+	protected void updateBoard(Point p, String s) {
+		int x = p.x;
+		int y = p.y;
+				
+		if(y == 9) {
+			getBoard()[x][y] = s;	
+		} else {
+			getBoard()[x][y] = s + " ";
+		}
+	}
+	
+	/*
+	 * Creates Player "fleet" (ArrayList myShips)
+	 * Player -> void
+	 */	
+	protected void createFleet() {
+		
+		int shipCount = 0;
+		
+		while(shipCount++ <= 5) {
+			
+			Point xy;			
+			
+			while(true) {
+				
+				xy = new Point();
+				
+				// Get Row Coordinate
+				myConsole.displayMessage("Enter X coordinate for ship #" + shipCount + ": ");
+				xy.x = myConsole.getCoordinate(0, maxRow);
+				
+				// Get Column Coordinate
+				myConsole.displayMessage("Enter Y coordinate for ship #" + shipCount + ": ");
+				xy.y = myConsole.getCoordinate(0, maxCol);
+				
+				// Check for repeated ship location
+				// If this isn't the first ship
+				if(shipCount > 0) {
+					if(isLocationUsed(xy)) {
+						myConsole.displayMessage("That location is already being used.");					
+						continue;							
+					} else {
+						break;
+					}
+				}
+			}
+			
+			Ship myShip = new Ship(xy, true);
+			myShips.add(myShip);
+			
+			updateGameboard(xy, "S");
+			// Display gameboard w/ each ship placed. TODO
+		}
+	}
+	
+	/*
+	 * Creates fleet of 5 ships without input
+	 * Places five points in myShips ArrayList
+	 * void -> void
+	 */
+	protected void autoCreateFleet() {
+		
+		int shipCount = 1;
+		
+		while(shipCount++ <= 5) {
+			
+			Point xy;
+			
+			while(true) {
+				
+				xy = getRandomPoint();
+
+				if(shipCount > 0) {
+					if(isLocationUsed(xy)) {				
+						continue;							
+					} else {
+						break;
+					}
+				}
+			}
+
+			Ship myShip = new Ship(xy, true);
+			myShips.add(myShip);
+		}
+	}
+	
+	/*
+	 * Gets Point for player shots
+	 * void -> Point
+	 */
+	protected Point takeShot() {
+		
+		Point xy = new Point();
+
+		// If player is user
+		if(isHuman) {
+			myConsole.displayMessage("Enter X coordinate for shot #" + shotCount.getCounter() + ": ");
+			xy.x = myConsole.getCoordinate(0, maxRow);
+			myConsole.displayMessage("Enter Y coordinate for shot #" + shotCount.getCounter() + ": ");
+			xy.y = myConsole.getCoordinate(0, maxCol);
+
+		} else {
+			// Get coordinates for computer ship
+			do {
+				xy = getRandomPoint();
+			} while(isShotRepeat(xy));
+	
+		}
+		
+		// Now that we have a good shot, add to the counter.
+		shotCount.addToCounter();
+		return xy;
+	}
+	
+	/*
+	 * Evaluates "shot" (point) fired by players
+	 * Player, Player, Point -> void
+	 */
+	protected boolean evaluateShot(Point point) {
+		// If shot hit a ship
+		if(isLocationUsed(point)) {
+			return true;
+		// Shot missed.
+		} else {
+			return false;			
+		}
+	}
+		
+//		// Check point against player array
+//		
+//		// shooter is user
+//		if(shooter.checkForUser(shooter)) {
+//			// Check user array for hit
+//			if(isLocationUsed(shooter, point)) {
+//				
+//				pause(1000);
+//				
+//				// If shot a repeated "sunk your own ship" shot				
+//				if(shooter.isShotRepeat(shooter, point)) {
+//					Console.displayMessage("You made that shot before.");
+//				} else {
+//					Console.displayMessage("You sank your own ship!");
+//					
+//					// Update board
+//					Gameboard.updateGameboard(point, "x");
+//					pause(1000);	
+//					
+//					// Change user ship.active to false
+//					shooter.setToFalse(shooter, point);
+//					
+//					// Add point to myShots
+//					myShots.add(point);
+//				}
+//			} else {
+//				// Check user shot against computer array
+//				if(isLocationUsed(other, point)) {
+//					
+//					pause(1000);
+//					
+//					// If shot a repeated shot that sunk enemy ship
+//					if(shooter.isShotRepeat(shooter, point)) {
+//						Console.displayMessage("You made that shot before.");
+//					} else {
+//						Console.displayMessage("You sank an enemy ship!");
+//						
+//						// Update board
+//						Gameboard.updateGameboard(point, "X");
+//						pause(1000);	
+//						
+//						// Change computer ship.active to false
+//						shooter.setToFalse(other, point);
+//						
+//						// Add point to myShots
+//						myShots.add(point);
+//					}										
+//				} else {
+//					
+//					pause(1000);
+//					
+//					// If shot a repeated missed host
+//					if(shooter.isShotRepeat(shooter, point)) {
+//						Console.displayMessage("You made that shot before.");
+//					} else {
+//						Console.displayMessage("You missed.");
+//						
+//						// Update board
+//						Gameboard.updateGameboard(point, "-");
+//						pause(1000);		
+//						
+//						// Add point to myShots
+//						myShots.add(point);										
+//					}					
+//				}				
+//			}
+//		} else {
+//			// shooter is computer
+//			if(isLocationUsed(other, point)) {
+//				
+//				pause(1250);
+//				Console.displayMessage("The computer sank your ship!");
+//				
+//				// Update board
+//				Gameboard.updateGameboard(point, "x");
+//				pause(1000);	
+//				
+//				// record computer shot
+//				getMyShots().add(point);	
+//				
+//				// Change user ship.active to false
+//				other.setToFalse(other, point);				
+//			} else {
+//				
+//				pause(1250);
+//				Console.displayMessage("Computer missed.");
+//				
+//				// record missed computer shot
+//				getMyShots().add(point);				
+//			}
+//		}
+//	}
+	
+	/*
+	 * Checks active state of ships in myArray for victory
+	 * Player, Player -> boolean
+	 */
+	protected boolean hasLost() {
+		
+		for(Ship s : myShips) {
+			if(s.getActive() == true) {
+				return false;
+			}
+		}		
+		return true;
+	}
+	
+	/*
+	 * Check if Point already exists in ArrayList myShips
+	 */
+	protected boolean isLocationUsed(Point point) {
+			
+		for(Ship s : myShips) {
+	        if(s.getLocation().equals(point)) {
+	        		return true;
+	        }
+		}		
+		return false;
+	}
+	
+	/*
+	 * Checks computer myShots for repeated shots
+	 * Player, Point -> boolean
+	 */	
+	protected boolean isShotRepeat(Point xy) {
+		for(Point point : myShots) {
+	        if(point.equals(xy)) {
+	        		return true;
+	        }
+		}
+		return false;
+	}
+	
+	/*
+	 * Checks if player is user
+	 * void -> boolean
+	 */
+	protected boolean isHuman() {
+		return this.isHuman;
+	}
+	
+	/*
+	 * returns maxRow
+	 * void -> int
+	 */	
+	protected int getMaxRow() {
+		return maxRow;
+	} 
+	
+	/*
+	 * returns maxCol
+	 * void -> int
+	 */	
+	protected int getMaxCol() {
+		return maxCol;
+	}
+	
+	/*
+	 * Returns field gameboard
+	 * void -> Array[][]
+	 */
+	protected String[][] getBoard() {
+		return gameboard;
+	}
+	
+	/*
+	 * Returns ArrayList myShips
+	 */
+	protected ArrayList <Ship> getMyShips() {
+		return this.myShips;
+	}
+	
+	/**
+	 * Return ArrayList myShots
+	 */
+	protected ArrayList <Point> getMyShots() {
+		return myShots;
+	}
+	
+	/* 
+	 * Gets a random point within our playable grid
+	 * void -> Point
+	 */
+	protected Point getRandomPoint() {
+		Point xy = new Point();
+		Random r = new Random();
+		
+		xy.x = r.nextInt(maxRow);
+		xy.y = r.nextInt(maxCol);
+		
+		return xy;
+	}
+	
+	/*
+	 * Change sunken Ship.active to false
+	 * Point -> void
+	 */
+	public void setToFalse(Point point) {
+		// Change user ship.active to false
+		for(Ship s : myShips) {
+			if(s.getLocation().equals(point)) {
+                s.setActive(false);
+			}
+		}
+	}
+
+	protected void setHit(Point p) {
+		// user shot/ check comp board
+		// hit = comp ship isActive
+		// update compFleet board and user hit/miss baord(gameboard) TODO
+		updateBoard(p, "X");
+		
+		if(isHuman()) {
+			setToFalse(p);
+		} else {
+			
+		}
+		
+	}
+
+	public void setMiss(Point xy) {
+		// user shot/ check comp board
+		// miss = update user gameboard TODO
+		updateBoard(p, "X");
+		
+		if(isHuman()) {
+			setToFalse(p);
+		} else {
+			
+		}
+		
+	}
+}
