@@ -1,0 +1,64 @@
+package com.LeeGainer.Battleship2;
+
+import java.util.Scanner;
+
+public class Console {
+	
+	private static Scanner myScanner = new Scanner(System.in);
+	
+	// I/O
+	
+	/*
+	 * Outputs message
+	 * String -> void
+	 */
+	public void displayMessage(String string) {
+		System.out.println(string);
+	}
+	
+	/*
+	 * Displays Gameboard Array[][], gameboard
+	 * Gameboard object -> void
+	 */
+	public void displayBoard(Gameboard game) {
+		
+		int mr = game.getMaxRow();
+		int mc = game.getMaxCol();
+		
+		for(int i = 0; i < mr; i++) {
+			System.out.println("\r");
+			for(int j = 0; j < mc; j++) {
+				// Output gameboard frame top rows
+				// Output gameboard frame left columns
+				System.out.print(game.getBoard()[i][j]);
+				// Output gameboard right columns
+				// Output gameboard bottom rows
+			}
+		}		
+		displayMessage("\n");
+	}
+
+	/*
+	 * Gets coordinate from user or computer
+	 * Player -> int
+	 */
+	public int getCoordinate(int minValue, int maxValue) {
+		
+		String coordinate;
+			
+		// Validate coordinate
+		while(true) {
+			coordinate = myScanner.next();
+			
+			if (coordinate.matches("[0-9]")) {
+				break;
+			} else {
+				displayMessage("That input is invalid.\n"
+						+ "Please enter a number between 0 and " + Integer.toString(maxValue) + ". ");
+			}
+		}
+			
+		return Integer.parseInt(coordinate);
+	}
+		
+}
