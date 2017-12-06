@@ -7,23 +7,19 @@ public class Battleship {
 	Console myConsole = new Console();
 	
 	Gameboard userBoard, computerBoard;
-	Player user, computer;
+	// Player user, computer;
 	
 	public static void main(String [] args) {
 		
 		Battleship myBattleship = new Battleship();
 		myBattleship.setupGame();
-		myBattleship.playGame();
-				
+		myBattleship.playGame();				
 	}
 
 	public Battleship() {
 		
 		userBoard = new Gameboard(true);
-		computerBoard = new Gameboard(false);
-		user = new Player("user");
-		computer = new Player("computer");
-		
+		computerBoard = new Gameboard(false);		
 	}
 	
 	/* 
@@ -36,7 +32,7 @@ public class Battleship {
 		
 		//Build the users fleet
 		myConsole.displayMessage("Prepare your fleet for battle.");
-		// Display empty board (user's fleetBoard) TODO
+		myConsole.displayBoard(userBoard.getFleet());
 		userBoard.createFleet();
 		myConsole.displayMessage("Your fleet is deployed.");
 		
@@ -57,7 +53,7 @@ public class Battleship {
 		Point xy;
 		
 		while(true) {
-			// Display blank hits/misses board for user TODO
+			myConsole.displayBoard(userBoard.getBoard());
 			myConsole.displayMessage("PLAYER'S TURN:");
 			xy = userBoard.takeShot();
 			// Evaluate if the user's shot against the computer board.
@@ -70,8 +66,7 @@ public class Battleship {
 				userBoard.setMiss(xy);
 				myConsole.displayMessage("You missed.");
 			}
-			// Display user fleet update info TODO
-			myConsole.displayBoard(userBoard);
+			// Display user fleet update info TEXT TODO
 			if(computerBoard.hasLost()) {
 				myConsole.displayMessage("Looks like you WIN!");
 				break;
