@@ -9,14 +9,15 @@ public class Gameboard {
 	Console myConsole = new Console();
 	Counter shotCount = new Counter();
 	
-	// The gameboard 2D array is size [maxRow][maxCol].
-	// The area in the array that is used for play is [maxRow - 2][maxCol - 6].
+	// The gameboard 2D array is size [maxRow + 2][maxCol + 6].
+	// There is a frame displayed around the gameboard that requires 2 rows and 6 columns.
+	// The area in the array that is used for play is [maxRow][maxCol].
 	// The play area is square, [m][m].
 	
-	private int maxRow = 9;
-	private int maxCol = 9;
-	private String[][] gameboard;
-	private String[][] fleetboard;
+	private int maxRow = 10;
+	private int maxCol = 10;
+	private String[][] gameboard;	// Hits and misses
+	private String[][] fleetboard;	// Ship locations
 	private boolean isHuman = false;
 	private ArrayList <Ship> myShips;
 	private ArrayList <Point> myShots;
@@ -24,60 +25,67 @@ public class Gameboard {
 	public Gameboard(boolean isHuman) {
 		this.isHuman = isHuman;
 		
-		setUpGameboard();
+		// Adding 2 and 6 to the rows/columns allows the space necesary to display gameplay info around 
+		// the gameboard that is required for gameplay and also allows the play area to be resized	 via
+		// the ints maxRow and maxCol
+		String[][] gameboard = new String[maxRow + 2][maxCol + 6];
+		String[][] fleetboard = new String[maxRow + 2][maxCol + 6];
+		
+		setUpBoard(gameboard);
+		setUpBoard(fleetboard);
 	}
 
 	/*
-	 * Create initial gameboard
+	 * Create gameboard and fleetboard arrays
 	 * void -> void
-	 * ALL THIS METHOD CODE IS NOW BROKE.
 	 */
-	protected void setUpGameboard() {
+	protected void setUpBoard(String[][] board) {	
 		
-		gameboard = new String [maxRow][maxCol];
+		int row = board.length;
+		int col = board[0].length;
 		
-		for(int i = 0; i < maxRow; i++) {
-			for(int j = 0; j < maxCol; j++) {
+		for(int i = 0; i < row; i++) {
+			for(int j = 0; j < col; j++) {
 				
 				// Place numbers in first row
-				if (i == 0 && j != 0 && j != 1 && j != 2 && j != maxCol - 3 && j != maxCol - 2 && j != maxCol - 1) {
-					gameboard[i][j] = String.valueOf(j - 3) + " ";
+				if (i == 0 && j != 0 && j != 1 && j != 2 && j != col - 3 && j != col - 2 && j != col - 1) {
+					board[i][j] = String.valueOf(j - 3) + " ";
 				}
 				
 				// Draw spaces in all columns but last number column
 				// The last column that holds numbers (ships) needs 2 spaces
-				else if(i != 0 && i != 11 && j != maxCol - 4) {
-					gameboard[i][j] = "  ";
+				else if(i != 0 && i != 11 && j != col - 4) {
+					board[i][j] = "  ";
 				}
 				
 				// draw spaces
 				else {
-					gameboard[i][j] = " ";
+					board[i][j] = " ";
 				}
 				
 				// place numbers in bottom row
-				if (i == maxRow - 1 && j != 0 && j != 1 && j != 2 && j != maxCol - 3 && j != maxCol - 2 && j != maxCol - 1) {
-					gameboard[i][j] = String.valueOf(j - 3) + " ";
+				if (i == row - 1 && j != 0 && j != 1 && j != 2 && j != col - 3 && j != col - 2 && j != col - 1) {
+					board[i][j] = String.valueOf(j - 3) + " ";
 				}
 				
 				// place numbers in columns on Lside of board
-				if (j == 0 && i != 0 && i != maxRow - 1) {
-					gameboard[i][j] = String.valueOf(i - 1);
+				if (j == 0 && i != 0 && i != row - 1) {
+					board[i][j] = String.valueOf(i - 1);
 				}
 				
 				// place numbers in columns on Rside of board
-				if (j == maxCol - 1 && i != 0 && i != maxRow - 1) {
-					gameboard[i][j] = String.valueOf(i - 1) + " ";
+				if (j == col - 1 && i != 0 && i != row - 1) {
+					board[i][j] = String.valueOf(i - 1) + " ";
 				}
 				
 				//place spaces along side columns
-				if ((j == 1 || j == maxCol - 2) && i != 0 && i != maxRow - 1) {
-					gameboard[i][j] = " ";
+				if ((j == 1 || j == col - 2) && i != 0 && i != row - 1) {
+					board[i][j] = " ";
 				}
 				
 				// place pipes along sides
-				if ((j == 2 || j == maxCol - 3) && i != 0 && i != maxRow - 1) {
-					gameboard[i][j] = "|";
+				if ((j == 2 || j == col - 3) && i != 0 && i != row - 1) {
+					board[i][j] = "|";
 				}
 			}			
 		}
@@ -91,7 +99,7 @@ public class Gameboard {
 		int x = p.x;
 		int y = p.y;
 				
-		if(y == 9) {
+		if(y == maxCol - 1) {
 			getBoard()[x][y] = s;	
 		} else {
 			getBoard()[x][y] = s + " ";
@@ -137,7 +145,7 @@ public class Gameboard {
 			Ship myShip = new Ship(xy, true);
 			myShips.add(myShip);
 			
-			updateGameboard(xy, "S");
+			updateBoard(xy, "S");
 			// Display gameboard w/ each ship placed. TODO
 		}
 	}
@@ -381,6 +389,14 @@ public class Gameboard {
 	}
 	
 	/*
+	 * Returns field fleetboard
+	 * void -> Array[][]
+	 */
+	protected String[][] getFleet() {
+		return fleetboard;
+	}
+	
+	/*
 	 * Returns ArrayList myShips
 	 */
 	protected ArrayList <Ship> getMyShips() {
@@ -402,8 +418,9 @@ public class Gameboard {
 		Point xy = new Point();
 		Random r = new Random();
 		
-		xy.x = r.nextInt(maxRow);
-		xy.y = r.nextInt(maxCol);
+		// maxRow/maxCol - 1 due to 0 index		
+		xy.x = r.nextInt(maxRow - 1);
+		xy.y = r.nextInt(maxCol - 1);
 		
 		return xy;
 	}
@@ -435,13 +452,13 @@ public class Gameboard {
 		
 	}
 
-	public void setMiss(Point xy) {
+	protected void setMiss(Point xy) {
 		// user shot/ check comp board
 		// miss = update user gameboard TODO
-		updateBoard(p, "X");
+		updateBoard(xy, "X");
 		
 		if(isHuman()) {
-			setToFalse(p);
+			setToFalse(xy);
 		} else {
 			
 		}
