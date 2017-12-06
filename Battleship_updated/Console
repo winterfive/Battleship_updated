@@ -17,22 +17,18 @@ public class Console {
 	}
 	
 	/*
-	 * Displays Gameboard Array[][], gameboard
+	 * Displays any Gameboard String[][]
 	 * Gameboard object -> void
 	 */
-	public void displayBoard(Gameboard game) {
+	protected void displayBoard(String[][] array) {
 		
-		int mr = game.getMaxRow();
-		int mc = game.getMaxCol();
+		int row = Gameboard.getMaxRow() + 2;
+		int col = Gameboard.getMaxCol() + 6;
 		
-		for(int i = 0; i < mr; i++) {
+		for(int i = 0; i < row; i++) {
 			System.out.println("\r");
-			for(int j = 0; j < mc; j++) {
-				// Output gameboard frame top rows
-				// Output gameboard frame left columns
-				System.out.print(game.getBoard()[i][j]);
-				// Output gameboard right columns
-				// Output gameboard bottom rows
+			for(int j = 0; j < col; j++) {
+				System.out.print(array[i][j]);
 			}
 		}		
 		displayMessage("\n");
