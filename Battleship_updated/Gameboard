@@ -2,6 +2,7 @@ package com.LeeGainer.Battleship2;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Gameboard {
@@ -9,100 +10,57 @@ public class Gameboard {
 	Console myConsole = new Console();
 	Counter shotCount = new Counter();
 	
-	// The gameboard 2D array is size [maxRow + 2][maxCol + 6].
-	// There is a frame displayed around the gameboard that requires 2 rows and 6 columns.
-	// The area in the array that is used for play is [maxRow][maxCol].
-	// The play area is square, [m][m].
-	
 	private int maxRow = 10;
 	private int maxCol = 10;
-	private String[][] gameboard;	// Hits and misses
+	private String[][] shotboard;	// Hits and misses
 	private String[][] fleetboard;	// Ship locations
 	private boolean isHuman = false;
-	private ArrayList <Ship> myShips;
-	private ArrayList <Point> myShots;
+	private ArrayList <Ship> myShips = new ArrayList<Ship>();
+	private ArrayList <Point> myShots = new ArrayList<Point>();
 	
 	public Gameboard(boolean isHuman) {
 		this.isHuman = isHuman;
 		
-		// Adding 2 and 6 to the rows/columns allows the space necesary to display gameplay info around 
-		// the gameboard that is required for gameplay and also allows the play area to be resized	 via
-		// the ints maxRow and maxCol
-		String[][] gameboard = new String[maxRow + 2][maxCol + 6];
-		String[][] fleetboard = new String[maxRow + 2][maxCol + 6];
+		shotboard = new String[maxRow][maxCol];
+		fillArray(shotboard, " ");		
 		
-		setUpBoard(gameboard);
-		setUpBoard(fleetboard);
-	}
-
-	/*
-	 * Create gameboard and fleetboard arrays
-	 * void -> void
-	 */
-	protected void setUpBoard(String[][] board) {	
-		
-		int row = board.length;
-		int col = board[0].length;
-		
-		for(int i = 0; i < row; i++) {
-			for(int j = 0; j < col; j++) {
-				
-				// Place numbers in first row
-				if (i == 0 && j != 0 && j != 1 && j != 2 && j != col - 3 && j != col - 2 && j != col - 1) {
-					board[i][j] = String.valueOf(j - 3) + " ";
-				}
-				
-				// Draw spaces in all columns but last number column
-				// The last column that holds numbers (ships) needs 2 spaces
-				else if(i != 0 && i != 11 && j != col - 4) {
-					board[i][j] = "  ";
-				}
-				
-				// draw spaces
-				else {
-					board[i][j] = " ";
-				}
-				
-				// place numbers in bottom row
-				if (i == row - 1 && j != 0 && j != 1 && j != 2 && j != col - 3 && j != col - 2 && j != col - 1) {
-					board[i][j] = String.valueOf(j - 3) + " ";
-				}
-				
-				// place numbers in columns on Lside of board
-				if (j == 0 && i != 0 && i != row - 1) {
-					board[i][j] = String.valueOf(i - 1);
-				}
-				
-				// place numbers in columns on Rside of board
-				if (j == col - 1 && i != 0 && i != row - 1) {
-					board[i][j] = String.valueOf(i - 1) + " ";
-				}
-				
-				//place spaces along side columns
-				if ((j == 1 || j == col - 2) && i != 0 && i != row - 1) {
-					board[i][j] = " ";
-				}
-				
-				// place pipes along sides
-				if ((j == 2 || j == col - 3) && i != 0 && i != row - 1) {
-					board[i][j] = "|";
-				}
-			}			
-		}
+		fleetboard = new String[maxRow][maxCol];
+		fillArray(fleetboard, " ");		
 	}
 	
 	/*
-	 * Updates Gameboard String[][] gameboard
+	 * Fills null String[][] with spaces, " "
+	 * String[][], String -> void
+	 */
+	private void fillArray(String[][] board, String s) {	
+		for(int i = 0; i < maxRow; i++) {
+			for(int j = 0; j < maxCol; j++) {
+				board[i][j] = s;
+			}
+		}
+	}
+
+	/*
+	 * Updates Gameboard fleetboard
 	 * Point -> void
 	 */
-	protected void updateBoard(Point p, String s) {
+	protected void updateFleet(Point p, String s) {
+		int x = p.x;
+		int y = p.y;
+		
+		this.getFleet()[x][y] = s;
+	}
+	
+	/*
+	 * Updates Gameboard shotboard
+	 * Point -> void
+	 */
+	protected void updateShots(Point p, String s) {
 		int x = p.x;
 		int y = p.y;
 				
 		if(y == maxCol - 1) {
-			getBoard()[x][y] = s;	
-		} else {
-			getBoard()[x][y] = s + " ";
+			getShots()[x][y] = s;	
 		}
 	}
 	
@@ -114,7 +72,7 @@ public class Gameboard {
 		
 		int shipCount = 0;
 		
-		while(shipCount++ <= 5) {
+		while(shipCount < 5) {
 			
 			Point xy;			
 			
@@ -123,18 +81,18 @@ public class Gameboard {
 				xy = new Point();
 				
 				// Get Row Coordinate
-				myConsole.displayMessage("Enter X coordinate for ship #" + shipCount + ": ");
-				xy.x = myConsole.getCoordinate(0, maxRow);
+				myConsole.displayMessage("\nEnter X coordinate for ship #" + (shipCount + 1) + ": ");
+				xy.x = myConsole.getCoordinate(0, maxRow - 1);
 				
 				// Get Column Coordinate
-				myConsole.displayMessage("Enter Y coordinate for ship #" + shipCount + ": ");
-				xy.y = myConsole.getCoordinate(0, maxCol);
+				myConsole.displayMessage("Enter Y coordinate for ship #" + (shipCount + 1) + ": ");
+				xy.y = myConsole.getCoordinate(0, maxCol - 1);
 				
 				// Check for repeated ship location
 				// If this isn't the first ship
 				if(shipCount > 0) {
 					if(isLocationUsed(xy)) {
-						myConsole.displayMessage("That location is already being used.");					
+						myConsole.displayMessage("\nThat location is already being used.");					
 						continue;							
 					} else {
 						break;
@@ -142,11 +100,13 @@ public class Gameboard {
 				}
 			}
 			
-			Ship myShip = new Ship(xy, true);
-			myShips.add(myShip);
+			System.out.println("Got to here: 1");
 			
-			updateBoard(xy, "S");
-			// Display gameboard w/ each ship placed. TODO
+			Ship myShip = new Ship(xy, true);
+			myShips.add(myShip);			
+			updateFleet(xy, "S");
+			myConsole.displayBoard(this.getFleet(), this);
+			shipCount++;
 		}
 	}
 	
@@ -381,18 +341,18 @@ public class Gameboard {
 	}
 	
 	/*
-	 * Returns field gameboard
+	 * Returns field shotboard
 	 * void -> Array[][]
 	 */
-	protected String[][] getBoard() {
-		return gameboard;
+	protected String[][] getShots() {
+		return shotboard;
 	}
 	
 	/*
 	 * Returns field fleetboard
 	 * void -> Array[][]
 	 */
-	protected String[][] getFleet() {
+	public String[][] getFleet() {
 		return fleetboard;
 	}
 	
