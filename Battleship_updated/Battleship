@@ -31,16 +31,16 @@ public class Battleship {
 		myConsole.displayMessage("*** Welcome to the Battleship Game ***\n\nRight now, the sea is empty.");
 		
 		//Build the users fleet
-		myConsole.displayMessage("Prepare your fleet for battle.");
-		myConsole.displayBoard(userBoard.getFleet());
+		myConsole.displayBoard(userBoard.getFleet(), userBoard);
+		myConsole.displayMessage("\n\nPrepare your fleet for battle.");		
 		userBoard.createFleet();
-		myConsole.displayMessage("Your fleet is deployed.");
+		myConsole.displayMessage("\nYour fleet is deployed.");
 		
 		// Build the computer's fleet
-		myConsole.displayMessage("Preparing the computer's fleet for battle.");
+		myConsole.displayMessage("\nPreparing the computer's fleet for battle.");
 		computerBoard.autoCreateFleet();
 		pause(2000);
-		myConsole.displayMessage("Let the battle begin!");
+		myConsole.displayMessage("\nLet the battle begin!");
 		
 	}
 	
@@ -53,7 +53,7 @@ public class Battleship {
 		Point xy;
 		
 		while(true) {
-			myConsole.displayBoard(userBoard.getBoard());
+			myConsole.displayBoard(userBoard.getShots(), userBoard);
 			myConsole.displayMessage("PLAYER'S TURN:");
 			xy = userBoard.takeShot();
 			// Evaluate if the user's shot against the computer board.
@@ -88,7 +88,7 @@ public class Battleship {
 				myConsole.displayMessage("The computer missed.");
 			}
 			// Display user fleet update info TODO
-			myConsole.displayBoard(userBoard);
+			myConsole.displayBoard(userBoard.getShots(), userBoard);
 			if(computerBoard.hasLost()) {
 				myConsole.displayMessage("Looks like you LOSE!");
 				break;
