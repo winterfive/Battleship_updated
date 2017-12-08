@@ -1,4 +1,6 @@
 package com.LeeGainer.Battleship2;
+// @author Lee Gainer
+// @since November 2017
 
 import java.awt.Point;
 
@@ -31,21 +33,24 @@ public class Battleship {
 		myConsole.displayMessage("*** Welcome to the Battleship Game ***\n\nRight now, the sea is empty.");
 		
 		//Build the users fleet
-		myConsole.displayBoard(userBoard.getFleet(), userBoard);
+		myConsole.displayBoard(userBoard.getFleetboard(), userBoard);
 		myConsole.displayMessage("\n\nPrepare your fleet for battle.");		
 		userBoard.createFleet();
-		myConsole.displayMessage("\nYour fleet is deployed.");
+		myConsole.displayMessage("\n\nYour fleet is deployed.");
 		
 		// Build the computer's fleet
+		myConsole.pause(1500);
 		myConsole.displayMessage("\nPreparing the computer's fleet for battle.");
+		myConsole.pause(2000);
 		computerBoard.autoCreateFleet();
-		pause(2000);
+		myConsole.displayMessage("\nThe computer's fleet is ready.");	
+		myConsole.pause(1000);
 		myConsole.displayMessage("\nLet the battle begin!");
-		
+		myConsole.pause(1500);
 	}
 	
 	/*
-	 * Umbrella method for game play methods
+	 * Play the game
 	 * void -> void
 	 */
 	public void playGame() {
@@ -53,58 +58,52 @@ public class Battleship {
 		Point xy;
 		
 		while(true) {
-			myConsole.displayBoard(userBoard.getShots(), userBoard);
-			myConsole.displayMessage("PLAYER'S TURN:");
+			myConsole.displayBoard(userBoard.getShotboard(), userBoard);
+			myConsole.displayMessage("\n\nPLAYER'S TURN:");
 			xy = userBoard.takeShot();
+			myConsole.pause(1000);
 			// Evaluate if the user's shot against the computer board.
-			if(computerBoard.evaluateShot(xy)) {
+			// Shot is repeat
+			if(userBoard.isShotRepeat(xy)) {
+				myConsole.displayMessage("You've made that shot before.");
+			} else if(computerBoard.evaluateShot(xy)) {
 				// Human sank a computer ship
-				userBoard.setHit(xy);
+				userBoard.setHit(xy, computerBoard);
 				myConsole.displayMessage("You sank a ship!");
 			} else {
-				// Update human gameboard with miss
+				// Human missed.
 				userBoard.setMiss(xy);
 				myConsole.displayMessage("You missed.");
-			}
-			// Display user fleet update info TEXT TODO
+			}			
+			
 			if(computerBoard.hasLost()) {
+				myConsole.displayBoard(userBoard.getShotboard(), userBoard);
 				myConsole.displayMessage("Looks like you WIN!");
 				break;
 			}
 			
-			myConsole.displayMessage("COMPUTER'S TURN:");
+			myConsole.displayMessage("\n\nCOMPUTER'S TURN:");
+			myConsole.pause(1500);
 			xy = computerBoard.takeShot();
 			// Evaluate if the computer shot against the user board.
 			if(userBoard.evaluateShot(xy)) {
-				// Computer sank a ship
-				// Update computer gameboard with hit
-				computerBoard.setHit(xy);
-				// Change human ship isActive to false
-				userBoard.setToFalse(xy);
-				myConsole.displayMessage("The computer sank your ship!");				
+				// Computer sank a human ship
+				computerBoard.setHit(xy, userBoard);
+				myConsole.displayMessage("\nThe computer sank a ship!");				
 			} else {
-				// Update computerboard with missed shot.
+				// Computer missed
 				computerBoard.setMiss(xy);
-				myConsole.displayMessage("The computer missed.");
+				myConsole.displayMessage("\nThe computer missed.");
 			}
-			// Display user fleet update info TODO
-			myConsole.displayBoard(userBoard.getShots(), userBoard);
-			if(computerBoard.hasLost()) {
+			
+			// Display human player fleet status update
+			myConsole.pause(1000);
+			myConsole.showFleetStatus(userBoard);
+			if(userBoard.hasLost()) {
+				myConsole.displayBoard(userBoard.getFleetboard(), userBoard);
 				myConsole.displayMessage("Looks like you LOSE!");
 				break;
 			}
 		}			
-	}
-	
-	/*
-	 * Pauses game for better readability
-	 */	
-	private void pause(int i) { 
-		
-		try {
-			Thread.sleep(i);
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		}		
 	}
 }
