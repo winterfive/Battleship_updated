@@ -23,20 +23,29 @@ public class Console {
 	public int getCoordinate(int minValue, int maxValue) {
 		
 		String coordinate;
+		int x;
 			
 		// Validate coordinate
 		while(true) {
 			coordinate = myScanner.next();
 			
-			if (coordinate.matches("[0-maxValue]")) {
-				break;
-			} else {
+			if(!coordinate.matches("[0-9]")) {
 				displayMessage("That input is invalid.\n"
-						+ "Please enter a number between 0 and " + Integer.toString(maxValue) + ". ");
+					+ "Please enter a number between 0 and " + Integer.toString(maxValue) + ". ");	
+				continue;
 			}
-		}
 			
-		return Integer.parseInt(coordinate);
+			x = Integer.parseInt(coordinate);
+			
+			if(x > maxValue || x < minValue) {
+				displayMessage("That input is invalid.\n"
+					+ "Please enter a number between 0 and " + Integer.toString(maxValue) + ". ");	
+				continue;
+			} else {
+				break;
+			}
+		}			
+		return x;
 	}
 	
 	/*
@@ -57,7 +66,7 @@ public class Console {
 		for(int i = 0; i < row; i++) {
 			displayMessage(i + " |");
 			for(int j = 0; j < col; j++) {
-				if(j == col - 7) {
+				if(j == col - 1) {
 					displayMessage(array[i][j]);
 				} else {
 					displayMessage(array[i][j] + " ");
@@ -66,5 +75,35 @@ public class Console {
 			displayMessage("| " + i + "\n");
 		}
 		displayMessage("   " + sb.toString() + "   ");		
-	}		
+	}
+	
+	/*
+	 * Pauses game for better readability
+	 */	
+	public void pause(int i) { 
+		
+		try {
+			Thread.sleep(i);
+		} catch(InterruptedException ex) {
+		    Thread.currentThread().interrupt();
+		}		
+	}
+	
+	/*
+	 * Display Fleet status (how many ships are active)
+	 * Gameboard -> void
+	 */
+
+	public void showFleetStatus(Gameboard board) {
+		
+		Counter myCounter = new Counter();		
+		
+		for(Ship s : board.getMyShips()) {
+			if(s.getActive() == true) {
+				myCounter.addToCounter();
+			}
+		}
+		
+		displayMessage("\n\nYou have " + myCounter.getCounter() + " ships left in your fleet.");
+	}
 }
