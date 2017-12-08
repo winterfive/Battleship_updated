@@ -2,7 +2,6 @@ package com.LeeGainer.Battleship2;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class Gameboard {
@@ -15,8 +14,8 @@ public class Gameboard {
 	private String[][] shotboard;	// Hits and misses
 	private String[][] fleetboard;	// Ship locations
 	private boolean isHuman = false;
-	private ArrayList <Ship> myShips = new ArrayList<Ship>();
-	private ArrayList <Point> myShots = new ArrayList<Point>();
+	private ArrayList <Ship> myShips;
+	private ArrayList <Point> myShots;
 	
 	public Gameboard(boolean isHuman) {
 		this.isHuman = isHuman;
@@ -25,7 +24,10 @@ public class Gameboard {
 		fillArray(shotboard, " ");		
 		
 		fleetboard = new String[maxRow][maxCol];
-		fillArray(fleetboard, " ");		
+		fillArray(fleetboard, " ");
+		
+		myShips = new ArrayList <Ship>();
+		myShots = new ArrayList <Point>();
 	}
 	
 	/*
@@ -44,24 +46,22 @@ public class Gameboard {
 	 * Updates Gameboard fleetboard
 	 * Point -> void
 	 */
-	protected void updateFleet(Point p, String s) {
+	protected void updateFleetboard(Point p, String s) {
 		int x = p.x;
 		int y = p.y;
 		
-		this.getFleet()[x][y] = s;
+		this.getFleetboard()[x][y] = s;
 	}
 	
 	/*
-	 * Updates Gameboard shotboard
+	 * Updates shotboard
 	 * Point -> void
 	 */
-	protected void updateShots(Point p, String s) {
+	protected void updateShotboard(Point p, String s) {
 		int x = p.x;
 		int y = p.y;
-				
-		if(y == maxCol - 1) {
-			getShots()[x][y] = s;	
-		}
+		
+		getShotboard()[x][y] = s;
 	}
 	
 	/*
@@ -81,7 +81,7 @@ public class Gameboard {
 				xy = new Point();
 				
 				// Get Row Coordinate
-				myConsole.displayMessage("\nEnter X coordinate for ship #" + (shipCount + 1) + ": ");
+				myConsole.displayMessage("\n\nEnter X coordinate for ship #" + (shipCount + 1) + ": ");
 				xy.x = myConsole.getCoordinate(0, maxRow - 1);
 				
 				// Get Column Coordinate
@@ -94,18 +94,15 @@ public class Gameboard {
 					if(isLocationUsed(xy)) {
 						myConsole.displayMessage("\nThat location is already being used.");					
 						continue;							
-					} else {
-						break;
 					}
-				}
+				} 
+				break;
 			}
-			
-			System.out.println("Got to here: 1");
 			
 			Ship myShip = new Ship(xy, true);
 			myShips.add(myShip);			
-			updateFleet(xy, "S");
-			myConsole.displayBoard(this.getFleet(), this);
+			updateFleetboard(xy, "S");
+			myConsole.displayBoard(this.getFleetboard(), this);
 			shipCount++;
 		}
 	}
@@ -148,10 +145,11 @@ public class Gameboard {
 	protected Point takeShot() {
 		
 		Point xy = new Point();
+		shotCount.addToCounter();
 
 		// If player is user
 		if(isHuman) {
-			myConsole.displayMessage("Enter X coordinate for shot #" + shotCount.getCounter() + ": ");
+			myConsole.displayMessage("\nEnter X coordinate for shot #" + shotCount.getCounter() + ": ");
 			xy.x = myConsole.getCoordinate(0, maxRow);
 			myConsole.displayMessage("Enter Y coordinate for shot #" + shotCount.getCounter() + ": ");
 			xy.y = myConsole.getCoordinate(0, maxCol);
@@ -161,11 +159,12 @@ public class Gameboard {
 			do {
 				xy = getRandomPoint();
 			} while(isShotRepeat(xy));
+			
+			// test code
+//			xy.x = 1;
+//			xy.y = 1;
 	
 		}
-		
-		// Now that we have a good shot, add to the counter.
-		shotCount.addToCounter();
 		return xy;
 	}
 	
@@ -183,99 +182,6 @@ public class Gameboard {
 		}
 	}
 		
-//		// Check point against player array
-//		
-//		// shooter is user
-//		if(shooter.checkForUser(shooter)) {
-//			// Check user array for hit
-//			if(isLocationUsed(shooter, point)) {
-//				
-//				pause(1000);
-//				
-//				// If shot a repeated "sunk your own ship" shot				
-//				if(shooter.isShotRepeat(shooter, point)) {
-//					Console.displayMessage("You made that shot before.");
-//				} else {
-//					Console.displayMessage("You sank your own ship!");
-//					
-//					// Update board
-//					Gameboard.updateGameboard(point, "x");
-//					pause(1000);	
-//					
-//					// Change user ship.active to false
-//					shooter.setToFalse(shooter, point);
-//					
-//					// Add point to myShots
-//					myShots.add(point);
-//				}
-//			} else {
-//				// Check user shot against computer array
-//				if(isLocationUsed(other, point)) {
-//					
-//					pause(1000);
-//					
-//					// If shot a repeated shot that sunk enemy ship
-//					if(shooter.isShotRepeat(shooter, point)) {
-//						Console.displayMessage("You made that shot before.");
-//					} else {
-//						Console.displayMessage("You sank an enemy ship!");
-//						
-//						// Update board
-//						Gameboard.updateGameboard(point, "X");
-//						pause(1000);	
-//						
-//						// Change computer ship.active to false
-//						shooter.setToFalse(other, point);
-//						
-//						// Add point to myShots
-//						myShots.add(point);
-//					}										
-//				} else {
-//					
-//					pause(1000);
-//					
-//					// If shot a repeated missed host
-//					if(shooter.isShotRepeat(shooter, point)) {
-//						Console.displayMessage("You made that shot before.");
-//					} else {
-//						Console.displayMessage("You missed.");
-//						
-//						// Update board
-//						Gameboard.updateGameboard(point, "-");
-//						pause(1000);		
-//						
-//						// Add point to myShots
-//						myShots.add(point);										
-//					}					
-//				}				
-//			}
-//		} else {
-//			// shooter is computer
-//			if(isLocationUsed(other, point)) {
-//				
-//				pause(1250);
-//				Console.displayMessage("The computer sank your ship!");
-//				
-//				// Update board
-//				Gameboard.updateGameboard(point, "x");
-//				pause(1000);	
-//				
-//				// record computer shot
-//				getMyShots().add(point);	
-//				
-//				// Change user ship.active to false
-//				other.setToFalse(other, point);				
-//			} else {
-//				
-//				pause(1250);
-//				Console.displayMessage("Computer missed.");
-//				
-//				// record missed computer shot
-//				getMyShots().add(point);				
-//			}
-//		}
-//	}
-	
 	/*
 	 * Checks active state of ships in myArray for victory
 	 * Player, Player -> boolean
@@ -344,7 +250,7 @@ public class Gameboard {
 	 * Returns field shotboard
 	 * void -> Array[][]
 	 */
-	protected String[][] getShots() {
+	protected String[][] getShotboard() {
 		return shotboard;
 	}
 	
@@ -352,7 +258,7 @@ public class Gameboard {
 	 * Returns field fleetboard
 	 * void -> Array[][]
 	 */
-	public String[][] getFleet() {
+	public String[][] getFleetboard() {
 		return fleetboard;
 	}
 	
@@ -397,31 +303,27 @@ public class Gameboard {
 			}
 		}
 	}
-
-	protected void setHit(Point p) {
-		// user shot/ check comp board
-		// hit = comp ship isActive
-		// update compFleet board and user hit/miss baord(gameboard) TODO
-		updateBoard(p, "X");
-		
-		if(isHuman()) {
-			setToFalse(p);
-		} else {
-			
-		}
-		
+	
+	/*
+	 * Updates fleetboard and myShips with "hit"
+	 * Point -> void
+	 */
+	protected void setHit(Point p, Gameboard opponent) {
+		// Update fields for player who took shot
+		updateShotboard(p, "X");
+		myShots.add(p);
+		// Update fields for opponent
+		opponent.updateFleetboard(p, "X");
+		opponent.setToFalse(p);
 	}
-
-	protected void setMiss(Point xy) {
-		// user shot/ check comp board
-		// miss = update user gameboard TODO
-		updateBoard(xy, "X");
-		
-		if(isHuman()) {
-			setToFalse(xy);
-		} else {
-			
-		}
-		
+	
+	/*
+	 * Updates fleetboard with "miss"
+	 * Point -> void
+	 */
+	protected void setMiss(Point p) {
+		// Update fields for player who took shot
+		updateShotboard(p, "-");
+		myShots.add(p);
 	}
 }
