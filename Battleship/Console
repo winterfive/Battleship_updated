@@ -63,8 +63,7 @@ public class Console {
 			// Generate random coordinate for computer ship
 			Random a = new Random();		
 				
-			int x = a.nextInt(9);
-			
+			int x = a.nextInt(9);			
 			return x;
 		}		
 	}		
