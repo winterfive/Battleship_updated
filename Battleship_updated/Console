@@ -18,7 +18,7 @@ public class Console {
 	
 	/*
 	 * Gets coordinate from user or computer
-	 * Player -> int
+	 * int, int -> int
 	 */
 	public int getCoordinate(int minValue, int maxValue) {
 		
@@ -29,13 +29,14 @@ public class Console {
 		while(true) {
 			coordinate = myScanner.next();
 			
-			if(!coordinate.matches("[0-9]")) {
-				displayMessage("That input is invalid.\n"
-					+ "Please enter a number between 0 and " + Integer.toString(maxValue) + ". ");	
-				continue;
+			try {
+				x = Integer.parseInt(coordinate);
 			}
-			
-			x = Integer.parseInt(coordinate);
+			catch( Exception e) {
+				displayMessage("That input is invalid.\n"
+						+ "Please enter a number between 0 and " + Integer.toString(maxValue) + ". ");	
+				continue;
+			}			
 			
 			if(x > maxValue || x < minValue) {
 				displayMessage("That input is invalid.\n"
@@ -79,6 +80,7 @@ public class Console {
 	
 	/*
 	 * Pauses game for better readability
+	 * int -> void
 	 */	
 	public void pause(int i) { 
 		
@@ -91,9 +93,8 @@ public class Console {
 	
 	/*
 	 * Display Fleet status (how many ships are active)
-	 * Gameboard -> void
+	 * Object -> void
 	 */
-
 	public void showFleetStatus(Gameboard board) {
 		
 		Counter myCounter = new Counter();		
