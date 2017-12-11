@@ -10,7 +10,7 @@ public class Player {
 
 	/*
 	 * Returns name of Player
-	 * void -> String
+	 * Object -> String
 	 */	
 	public String getName(Player p) {
 		return name;
