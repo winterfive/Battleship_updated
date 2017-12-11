@@ -1,6 +1,4 @@
 package com.LeeGainer.Battleship2;
-// @author Lee Gainer
-// @since November 2017
 
 import java.awt.Point;
 
