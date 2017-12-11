@@ -44,7 +44,7 @@ public class Gameboard {
 
 	/*
 	 * Updates Gameboard fleetboard
-	 * Point -> void
+	 * Point, String -> void
 	 */
 	protected void updateFleetboard(Point p, String s) {
 		int x = p.x;
@@ -55,7 +55,7 @@ public class Gameboard {
 	
 	/*
 	 * Updates shotboard
-	 * Point -> void
+	 * Point, String -> void
 	 */
 	protected void updateShotboard(Point p, String s) {
 		int x = p.x;
@@ -66,7 +66,7 @@ public class Gameboard {
 	
 	/*
 	 * Creates Player "fleet" (ArrayList myShips)
-	 * Player -> void
+	 * void -> void
 	 */	
 	protected void createFleet() {
 		
@@ -158,19 +158,14 @@ public class Gameboard {
 			// Get coordinates for computer ship
 			do {
 				xy = getRandomPoint();
-			} while(isShotRepeat(xy));
-			
-			// test code
-//			xy.x = 1;
-//			xy.y = 1;
-	
+			} while(isShotRepeat(xy));	
 		}
 		return xy;
 	}
 	
 	/*
 	 * Evaluates "shot" (point) fired by players
-	 * Player, Player, Point -> void
+	 * Point -> boolean
 	 */
 	protected boolean evaluateShot(Point point) {
 		// If shot hit a ship
@@ -184,7 +179,7 @@ public class Gameboard {
 		
 	/*
 	 * Checks active state of ships in myArray for victory
-	 * Player, Player -> boolean
+	 * void -> boolean
 	 */
 	protected boolean hasLost() {
 		
@@ -198,6 +193,7 @@ public class Gameboard {
 	
 	/*
 	 * Check if Point already exists in ArrayList myShips
+	 * Point -> boolean
 	 */
 	protected boolean isLocationUsed(Point point) {
 			
@@ -211,7 +207,7 @@ public class Gameboard {
 	
 	/*
 	 * Checks computer myShots for repeated shots
-	 * Player, Point -> boolean
+	 * Point -> boolean
 	 */	
 	protected boolean isShotRepeat(Point xy) {
 		for(Point point : myShots) {
@@ -248,7 +244,7 @@ public class Gameboard {
 	
 	/*
 	 * Returns field shotboard
-	 * void -> Array[][]
+	 * void -> String[][]
 	 */
 	protected String[][] getShotboard() {
 		return shotboard;
@@ -256,7 +252,7 @@ public class Gameboard {
 	
 	/*
 	 * Returns field fleetboard
-	 * void -> Array[][]
+	 * void -> String[][]
 	 */
 	public String[][] getFleetboard() {
 		return fleetboard;
@@ -264,6 +260,7 @@ public class Gameboard {
 	
 	/*
 	 * Returns ArrayList myShips
+	 * void -> ArrayList
 	 */
 	protected ArrayList <Ship> getMyShips() {
 		return this.myShips;
@@ -271,6 +268,7 @@ public class Gameboard {
 	
 	/**
 	 * Return ArrayList myShots
+	 * void -> ArrayList
 	 */
 	protected ArrayList <Point> getMyShots() {
 		return myShots;
@@ -306,7 +304,7 @@ public class Gameboard {
 	
 	/*
 	 * Updates fleetboard and myShips with "hit"
-	 * Point -> void
+	 * Point, Object -> void
 	 */
 	protected void setHit(Point p, Gameboard opponent) {
 		// Update fields for player who took shot
