@@ -17,7 +17,7 @@ public class Battleship {
 		myBattleship.setupGame();
 		myBattleship.playGame();				
 	}
-
+	
 	public Battleship() {
 		
 		userBoard = new Gameboard(true);
