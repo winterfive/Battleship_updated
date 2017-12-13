@@ -1,6 +1,4 @@
 package com.LeeGainer.Battleship2;
-@author Lee Gainer
-@since November 2017
 
 import java.awt.Point;
 
@@ -14,14 +12,20 @@ public class Battleship {
 	public static void main(String [] args) {
 		
 		Battleship myBattleship = new Battleship();
-		myBattleship.setupGame();
-		myBattleship.playGame();				
+		myBattleship.beginGame();			
 	}
 	
-	public Battleship() {
-		
-		userBoard = new Gameboard(true);
-		computerBoard = new Gameboard(false);		
+	public Battleship() {}
+	
+	/*
+	 * Plays game again if the human chooses to do so
+	 * void -> void
+	 */	
+	public void beginGame() {
+		do {
+			setupGame();
+			playGame();			
+		} while(myConsole.playAgain());		
 	}
 	
 	/* 
@@ -29,6 +33,9 @@ public class Battleship {
 	 * void -> void
 	 */
 	private void setupGame() {	
+		
+		userBoard = new Gameboard(true);
+		computerBoard = new Gameboard(false);
 		
 		myConsole.displayMessage("*** Welcome to the Battleship Game ***\n\nRight now, the sea is empty.");
 		
@@ -39,14 +46,14 @@ public class Battleship {
 		myConsole.displayMessage("\n\nYour fleet is deployed.");
 		
 		// Build the computer's fleet
-		myConsole.pause(1500);
+		myConsole.pause(1000);
 		myConsole.displayMessage("\nPreparing the computer's fleet for battle.");
-		myConsole.pause(2000);
+		myConsole.pause(1000);
 		computerBoard.autoCreateFleet();
 		myConsole.displayMessage("\nThe computer's fleet is ready.");	
 		myConsole.pause(1000);
 		myConsole.displayMessage("\nLet the battle begin!");
-		myConsole.pause(1500);
+		myConsole.pause(1000);
 	}
 	
 	/*
@@ -78,7 +85,7 @@ public class Battleship {
 			
 			if(computerBoard.hasLost()) {
 				myConsole.displayBoard(userBoard.getShotboard(), userBoard);
-				myConsole.displayMessage("Looks like you WIN!");
+				myConsole.displayMessage("\n\nThe computer's fleet has been defeated.  You win!");
 				break;
 			}
 			
@@ -101,9 +108,13 @@ public class Battleship {
 			myConsole.showFleetStatus(userBoard);
 			if(userBoard.hasLost()) {
 				myConsole.displayBoard(userBoard.getFleetboard(), userBoard);
-				myConsole.displayMessage("Looks like you LOSE!");
-				break;
-			}
+				myConsole.displayMessage("\n\nYour fleet has been defeated.  You lose.");
+				// Display computer fleet?
+				if(myConsole.viewComputerFleet()) {
+					myConsole.displayBoard(computerBoard.getFleetboard(), computerBoard);
+				}
+				break;				
+			} 
 		}			
 	}
 }
