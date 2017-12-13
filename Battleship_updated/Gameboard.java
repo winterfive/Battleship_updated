@@ -135,6 +135,7 @@ public class Gameboard {
 
 			Ship myShip = new Ship(xy, true);
 			myShips.add(myShip);
+			updateFleetboard(xy, "S");
 		}
 	}
 	
