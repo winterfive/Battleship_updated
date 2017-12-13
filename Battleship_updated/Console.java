@@ -24,6 +24,8 @@ public class Console {
 		
 		String coordinate;
 		int x;
+		minValue -= 1;
+		maxValue -= 1;
 			
 		// Validate coordinate
 		while(true) {
@@ -105,6 +107,72 @@ public class Console {
 			}
 		}
 		
-		displayMessage("\n\nYou have " + myCounter.getCounter() + " ships left in your fleet.");
+		if(myCounter.getCounter() >= 2) {
+			displayMessage("\n\nYou have " + myCounter.getCounter() + " ships left in your fleet.");
+		} else {
+			displayMessage("\n\nYou have " + myCounter.getCounter() + " ship left in your fleet.");
+		}
+		
+		
+	}
+	
+	/*
+	 * Checks for positive response
+	 * void -> boolean 
+	 */
+	 public boolean checkForYes(String string) {
+		String[] list = new String[] {"yes", "y", "no", "n"};
+		
+		while(true) {
+			
+			string = myScanner.next();
+			
+			try {
+				string.toLowerCase();
+			} catch( Exception e ) {
+				displayMessage("Input is invalid.\n"
+						+ "Please type Y or N.");
+				continue;
+			}
+			break;
+		}
+		
+		for(String s : list) {
+			if(s.equalsIgnoreCase(string)) {
+				if(string.startsWith("y")) {
+					return true;
+				}
+			}
+		}		
+		return false;
+	}
+	 
+	 /*
+	  * Asks human if they want to see the computer's fleet
+	  * void -> boolean
+	  */
+	public boolean viewComputerFleet() {
+		displayMessage("\nWould you like to see the computer's fleet, Y/N?");
+		String s = myScanner.next();
+		if(checkForYes(s)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/*
+	 * Asks human if they want to play again?
+	 * void -> boolean
+	 */
+
+	public boolean playAgain() {
+		displayMessage("\nWould you like to play again, Y/N?");
+		String s = myScanner.next();
+		if(checkForYes(s)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
