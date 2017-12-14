@@ -23,12 +23,11 @@ public class Console {
 	public int getCoordinate(int minValue, int maxValue) {
 		
 		String coordinate;
-		int x;
-		minValue -= 1;
-		maxValue -= 1;
+		int x = 0;
+		boolean running = true;
 			
 		// Validate coordinate
-		while(true) {
+		while(running) {
 			coordinate = myScanner.next();
 			
 			try {
@@ -45,7 +44,7 @@ public class Console {
 					+ "Please enter a number between 0 and " + Integer.toString(maxValue) + ". ");	
 				continue;
 			} else {
-				break;
+				running = false;
 			}
 		}			
 		return x;
@@ -121,27 +120,12 @@ public class Console {
 	 * void -> boolean 
 	 */
 	 public boolean checkForYes(String string) {
-		String[] list = new String[] {"yes", "y", "no", "n"};
-		
-		while(true) {
-			
-			string = myScanner.next();
-			
-			try {
-				string.toLowerCase();
-			} catch( Exception e ) {
-				displayMessage("Input is invalid.\n"
-						+ "Please type Y or N.");
-				continue;
-			}
-			break;
-		}
+		 
+		String[] list = new String[] {"yes", "y"};	
 		
 		for(String s : list) {
 			if(s.equalsIgnoreCase(string)) {
-				if(string.startsWith("y")) {
-					return true;
-				}
+				return true;
 			}
 		}		
 		return false;
@@ -169,10 +153,12 @@ public class Console {
 	public boolean playAgain() {
 		displayMessage("\nWould you like to play again, Y/N?");
 		String s = myScanner.next();
+		
 		if(checkForYes(s)) {
+			displayMessage("\n");
 			return true;
 		} else {
 			return false;
-		}
+		}		
 	}
 }
