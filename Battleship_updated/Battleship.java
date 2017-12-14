@@ -63,8 +63,9 @@ public class Battleship {
 	public void playGame() {
 	
 		Point xy;
+		boolean running = true;
 		
-		while(true) {
+		while(running) {
 			myConsole.displayBoard(userBoard.getShotboard(), userBoard);
 			myConsole.displayMessage("\n\nPLAYER'S TURN:");
 			xy = userBoard.takeShot();
@@ -86,7 +87,8 @@ public class Battleship {
 			if(computerBoard.hasLost()) {
 				myConsole.displayBoard(userBoard.getShotboard(), userBoard);
 				myConsole.displayMessage("\n\nThe computer's fleet has been defeated.  You win!");
-				break;
+				running = false;
+				continue;
 			}
 			
 			myConsole.displayMessage("\n\nCOMPUTER'S TURN:");
@@ -104,8 +106,7 @@ public class Battleship {
 			}
 			
 			// Display human player fleet status update
-			myConsole.pause(1000);
-			myConsole.showFleetStatus(userBoard);
+			myConsole.pause(500);
 			if(userBoard.hasLost()) {
 				myConsole.displayBoard(userBoard.getFleetboard(), userBoard);
 				myConsole.displayMessage("\n\nYour fleet has been defeated.  You lose.");
@@ -113,8 +114,10 @@ public class Battleship {
 				if(myConsole.viewComputerFleet()) {
 					myConsole.displayBoard(computerBoard.getFleetboard(), computerBoard);
 				}
-				break;				
-			} 
+				running = false;
+			} else {
+				myConsole.showFleetStatus(userBoard); 
+			}
 		}			
 	}
 }
