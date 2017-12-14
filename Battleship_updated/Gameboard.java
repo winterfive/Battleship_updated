@@ -74,9 +74,10 @@ public class Gameboard {
 		
 		while(shipCount < 5) {
 			
-			Point xy;			
+			Point xy = new Point(0,0);
+			boolean running = true;
 			
-			while(true) {
+			while(running) {
 				
 				xy = new Point();
 				
@@ -96,7 +97,7 @@ public class Gameboard {
 						continue;							
 					}
 				} 
-				break;
+				running = false;
 			}
 			
 			Ship myShip = new Ship(xy, true);
@@ -114,13 +115,14 @@ public class Gameboard {
 	 */
 	protected void autoCreateFleet() {
 		
-		int shipCount = 1;
+		int shipCount = 1;		
 		
 		while(shipCount++ <= 5) {
 			
-			Point xy;
+			Point xy = new Point(0,0);
+			boolean running = true;
 			
-			while(true) {
+			while(running) {
 				
 				xy = getRandomPoint();
 
@@ -128,7 +130,7 @@ public class Gameboard {
 					if(isLocationUsed(xy)) {				
 						continue;							
 					} else {
-						break;
+						running = false;
 					}
 				}
 			}
@@ -151,9 +153,9 @@ public class Gameboard {
 		// If player is user
 		if(isHuman) {
 			myConsole.displayMessage("\nEnter X coordinate for shot #" + shotCount.getCounter() + ": ");
-			xy.x = myConsole.getCoordinate(0, maxRow);
+			xy.x = myConsole.getCoordinate(0, maxRow - 1);
 			myConsole.displayMessage("Enter Y coordinate for shot #" + shotCount.getCounter() + ": ");
-			xy.y = myConsole.getCoordinate(0, maxCol);
+			xy.y = myConsole.getCoordinate(0, maxCol - 1);
 
 		} else {
 			// Get coordinates for computer ship
