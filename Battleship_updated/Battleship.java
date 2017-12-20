@@ -18,7 +18,7 @@ public class Battleship {
 	public Battleship() {}
 	
 	/*
-	 * Plays game again if the human chooses to do so
+	 * Restarts game if the human chooses to do so
 	 * void -> void
 	 */	
 	public void beginGame() {
