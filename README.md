@@ -1,3 +1,4 @@
+# battleship-updated  
 Battleship is a grid based (2D array) game that you can play against the computer.   
 
 1: procedural  -  https://github.com/winterfive/battleship-procedural  
